@@ -1,6 +1,6 @@
 from utils import cp_words,get_sorted_words
 from getpass import getpass
-MAX_TRIES = 10
+MAX_TRIES = 5
 words = get_sorted_words()
 answer = getpass(prompt='Wordle answer:\t')
 
