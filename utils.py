@@ -11,3 +11,8 @@ def cp_words(word,answer):
             hint += '⬜'
 
     return hint
+
+def get_sorted_words():
+    with open('sorted_words.txt','r') as f:
+        sorted_words = f.read().split('\n')
+    return sorted_words
