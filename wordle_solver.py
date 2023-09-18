@@ -4,27 +4,27 @@ sorted_words = score_dict().sorted_words
 
 answer = input("Wordle answer:\t")
 
-word = sorted_words[0]
+guess = sorted_words[0]
 
 filtered_sorted_words = sorted_words
-while word != answer:
-    print(word)
-    print(cp_words(word,answer))
-    hints = cp_words(word,answer)
+while guess != answer:
+    print(guess)
+    print(cp_words(guess,answer))
+    hints = cp_words(guess,answer)
     new_filter = []
     for sw in filtered_sorted_words:
         conds = True
         for i in range(5):
             if hints[i] == '🟩':
-                conds = conds and sw[i] == word[i]
+                conds = conds and sw[i] == guess[i]
             elif hints[i] == '🟨':
-                conds = conds and word[i] in sw and sw[i] != word[i]
-            elif hints[i] not in hints[:i]:
-                conds = conds and word[i] not in sw
+                conds = conds and guess[i] in sw and sw[i] != guess[i]
+            elif guess[i] not in guess[:i]:
+                conds = conds and guess[i] not in sw
         if conds:
             new_filter.append(sw)
     
     filtered_sorted_words = new_filter
-    word = filtered_sorted_words[0]
+    guess = filtered_sorted_words[0]
 
-print(word+'\n'+cp_words(word,answer))
+print(guess+'\n'+cp_words(guess,answer))

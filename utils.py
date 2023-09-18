@@ -19,10 +19,7 @@ def cp_words(word,answer):
                     answer[j] = '_'
     return ''.join(hint)
 
-            
 
-
-    return hint
 
 DF = pd.read_csv('scores.csv',index_col=0)
 class score_dict:

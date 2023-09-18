@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-SCORE_FRAC = 0.8 #cannot be 1
+SCORE_FRAC = 0.5 #cannot be 1
 
 def calc_decay(v,l):
     return v*(SCORE_FRAC**l - 1)/(SCORE_FRAC-1)
