@@ -27,29 +27,30 @@ class WordleBot(discord.Client):
             await message.reply('Started a new game of Wordle.')
 
             def is_correct(m):
-                return m.author == message.author and len(m.content)==5 and (m.content in words or m.content == '!quit')
+                return m.author == message.author and len(m.content)==5 and (m.content.lower() in words or m.content == '!quit')
 
             word = random.choice(words)
             print(word)
             guess_num = 1
             try:
                 guess = await self.wait_for('message', check=is_correct, timeout=120)
+                gc = guess.content.lower()
             except asyncio.TimeoutError:
                 return await message.channel.send("Timed out. The answer was **{}**".format(word))
 
-            while guess.content != word and guess_num <= MAX_TRIES:
+            while gc != word and guess_num <= MAX_TRIES:
                 print("guessing")
-                await message.reply("Guess number {}:\n".format(guess_num)+cp_words(guess.content,word))
+                await message.reply("Guess number {}:\n".format(guess_num)+cp_words(gc,word))
                 guess_num += 1
                 try:
                     guess = await self.wait_for('message', check=is_correct, timeout=120)
+                    gc = guess.content.lower()
                 except asyncio.TimeoutError:
                     return await message.channel.send("Timed out. The answer was **{}**".format(word)) 
-                if guess.content == '!quit':
+                if gc == '!quit':
                     break
-            if word == guess.content:
-                await message.channel.send("🟩"*5)
-                await message.channel.send("You guessed it in {} tries".format(guess_num))
+            if word == gc:
+                await message.channel.send("🟩"*5+"\nYou guessed it in {} tries".format(guess_num))
             else:
                 await message.channel.send("You failed! The answer is {}".format(word))
 
