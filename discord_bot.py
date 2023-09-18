@@ -4,12 +4,11 @@ from utils import cp_words,score_dict
 from wordle_core import MAX_TRIES
 import random
 import asyncio
+import pickle
 sd = score_dict()
 words = sd.sorted_words
-TOKEN = 'MTE1MzI0NTc1NDIwNzUxODgyMA.Gu5Eip.Xbv390uX6h201n_9UKL-d0vhJrdd0PynPs7gfQ'
 
-
-
+TOKEN = pickle.load(open('token.pkl','rb')) #not gonna show my token to ya :)
 
 class WordleBot(discord.Client):
     async def on_ready(self):
