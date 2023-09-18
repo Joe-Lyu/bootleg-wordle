@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
-import pickle
-SCORE_FRAC = 0.5 #cannot be 1
+import pandas as pd
+SCORE_FRAC = 0.8 #cannot be 1
 
 def calc_decay(v,l):
     return v*(SCORE_FRAC**l - 1)/(SCORE_FRAC-1)
@@ -46,10 +46,11 @@ for word in wordle_word_list:
     scoredict[word] = eval_freq(word)
 
 scoredict = dict(sorted(scoredict.items(), key=lambda item: item[1]))
-sorted_words = list(scoredict.keys())
+letters = list(scoredict.keys())
+scores = list(scoredict.values())
+letters.reverse()
+scores.reverse()
+score_df = pd.DataFrame.from_dict({"letter": letters,
+                                   "score": scores})
 
-sorted_words = [sorted_words[i] for i in range(len(sorted_words)-1,-1,-1)]
-
-with open('sorted_words.txt','w') as f:
-    f.write('\n'.join(sorted_words))
-
+score_df.to_csv('scores.csv')

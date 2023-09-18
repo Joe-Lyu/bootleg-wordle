@@ -1,7 +1,7 @@
-from utils import cp_words,get_sorted_words
+from utils import cp_words,score_dict
 from getpass import getpass
 MAX_TRIES = 5
-words = get_sorted_words()
+words = score_dict().sorted_words
 answer = getpass(prompt='Wordle answer:\t')
 
 def word_input(guesses):
