@@ -1,7 +1,7 @@
 # bot.py
 import discord
 from utils import cp_words,score_dict
-from wordle_core import MAX_TRIES
+
 import random
 import asyncio
 import pickle
@@ -33,16 +33,21 @@ class WordleBot(discord.Client):
             except asyncio.TimeoutError:
                 return await message.channel.send("Timed out.")
             
+            from wordle_core import MAX_TRIES
+            MAX_TRIES = MAX_TRIES
+            
             if difficulty == 'easy':
-                word = random.choice(words[:len(words)//3])
+                word = sd.get_difficulty('easy')
             elif difficulty == 'medium':
-                word = random.choice(words[len(words)//3:2*len(words)//3])
+                word = sd.get_difficulty('medium')
             elif difficulty == 'hard':
-                word = random.choice(words[2*len(words)//3:])
+                word = sd.get_difficulty('hard')
                 MAX_TRIES = 10
                 await message.reply("Maximum number of tries is 10 for this game. Good luck.")
             else:
-                word = random.choice(words)
+                word = sd.get_difficulty()
+            
+            await message.reply("Difficulty is set to: **{}**".format(difficulty))
 
             def is_correct(m):
                 return m.author == message.author and len(m.content)==5 and (m.content.lower() in words or m.content == '!quit')
@@ -69,8 +74,10 @@ class WordleBot(discord.Client):
                 
             if word == gc:
                 await message.reply("🟩"*5+"\nYou guessed it in {} tries".format(guess_num))
-            else:
+            elif gc != '!quit':
                 await message.reply("You failed! The answer is {}".format(word))
+            else:
+                await message.reply("Quit the current Wordle game. The answer was {}".format(word))
 
         if message.content.startswith('$solve-wordle'):
             await message.reply('Solving an external Wordle game.')

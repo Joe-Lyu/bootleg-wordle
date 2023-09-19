@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+from wordfreq import word_frequency
+
 SCORE_FRAC = 0.5 #cannot be 1
 
 def calc_decay(v,l):
@@ -39,8 +41,6 @@ for word in wordle_word_list:
                 letterdict[letter] += 1
 
 letterdict = dict(sorted(letterdict.items(), key=lambda item: item[1]))
-plt.pie(letterdict.values(),labels=letterdict.keys())
-#plt.show()
 scoredict = {}
 for word in wordle_word_list:
     scoredict[word] = eval_freq(word)
@@ -50,7 +50,10 @@ letters = list(scoredict.keys())
 scores = list(scoredict.values())
 letters.reverse()
 scores.reverse()
+
 score_df = pd.DataFrame.from_dict({"letter": letters,
                                    "score": scores})
+
+score_df['freq'] = [word_frequency(word,'en') for word in letters]
 
 score_df.to_csv('scores.csv')
