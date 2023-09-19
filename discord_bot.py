@@ -14,11 +14,27 @@ class WordleBot(discord.Client):
     async def on_ready(self):
         print(f'Logged in as {self.user} (ID: {self.user.id})')
         print('------')
+    
+    
 
     async def on_message(self, message):
         # we do not want the bot to reply to itself
         if message.author.id == self.user.id:
             return
+        mention = "@"+str(self.user.id)
+        mention_replies = ["I will now hack your servers.",
+                            "What?",
+                            "Please go to Joe for complaints.",
+                            "I am not responsible for your limited vocabulary of five-letter words.",
+                            "The best starter word for Wordle is \"fuzzy\". Wait, or is that the worst?",
+                            "If you're from the New York Times, please don\'t sue me. :pleading_face:",
+                            "What's up?"]
+
+        if mention in message.content:
+            await message.reply(random.choice(mention_replies))
+        
+        if 'wordle' in message.content.lower() and random.random()<0.5 and not message.content.startswith("$"):
+            await message.reply("Wordle?")
 
         if message.content.startswith('$play-wordle'):
             await message.reply('Started a new game of Wordle.')
@@ -61,7 +77,7 @@ class WordleBot(discord.Client):
                 return await message.channel.send("Timed out. The answer was **{}**".format(word))
 
             while gc != word and guess_num <= MAX_TRIES:
-                print("guessing")
+                print("guessing: {}".format(gc))
                 if gc == '!quit':
                     break
                 await message.reply("Guess number {}:\n".format(guess_num)+cp_words(gc,word))
