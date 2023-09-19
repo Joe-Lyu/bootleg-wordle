@@ -22,11 +22,31 @@ class WordleBot(discord.Client):
 
         if message.content.startswith('$play-wordle'):
             await message.reply('Started a new game of Wordle.')
+            await message.reply('Choose a difficulty: easy, medium, hard, or random')
+            def is_valid_difficulty(m):
+                d = m.content
+                conds = d.lower() in ['easy','medium','hard','random']
+                return m.author == message.author and conds
+            try:
+                difficultym = await self.wait_for('message',check=is_valid_difficulty,timeout=120)
+                difficulty = difficultym.content.lower()
+            except asyncio.TimeoutError:
+                return await message.channel.send("Timed out.")
+            
+            if difficulty == 'easy':
+                word = random.choice(words[:len(words)//3])
+            elif difficulty == 'medium':
+                word = random.choice(words[len(words)//3:2*len(words)//3])
+            elif difficulty == 'hard':
+                word = random.choice(words[2*len(words)//3:])
+                MAX_TRIES = 10
+                await message.reply("Maximum number of tries is 10 for this game. Good luck.")
+            else:
+                word = random.choice(words)
 
             def is_correct(m):
                 return m.author == message.author and len(m.content)==5 and (m.content.lower() in words or m.content == '!quit')
 
-            word = random.choice(words)
             print(word)
             guess_num = 1
             try:
