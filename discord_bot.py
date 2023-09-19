@@ -111,6 +111,7 @@ class WordleBot(discord.Client):
                     guess = guessm.content
                 except asyncio.TimeoutError:
                     return await message.channel.send("Timed out.")
+                    break
                 
                 await message.reply("What are the colors from Wordle?")
                 if guess == '!quit':
@@ -120,6 +121,7 @@ class WordleBot(discord.Client):
                     hint = hintm.content
                 except asyncio.TimeoutError:
                     return await message.channel.send("Timed out.")
+                    break
             if hint == 'G'*5:
                 await message.reply("Congrats, you solved it! Well, I solved it, you kinda just put in all the letters and stuff.")
 

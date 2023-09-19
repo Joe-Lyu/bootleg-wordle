@@ -2,10 +2,10 @@ from utils import score_dict
 sorted_words = score_dict().sorted_words
 
 def convert_input_to_hint():
-    hint = input("Wordle colors:\t")
+    hint = input("Wordle colors:\t").upper()
     while not len(hint) == 5 and set(hint).issubset(set(('G','Y','?'))): 
         print("Wrong format, please re-enter")
-        hint = input("Wordle colors:\t")
+        hint = input("Wordle colors:\t").upper()
     hint = hint.replace('G','🟩')
     hint = hint.replace('Y','🟨')
     hint = hint.replace('?','⬜')
