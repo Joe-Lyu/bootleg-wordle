@@ -5,6 +5,7 @@ from utils import cp_words,score_dict
 import random
 import asyncio
 import pickle
+import sys
 sd = score_dict()
 words = sd.sorted_words
 
@@ -30,7 +31,10 @@ class WordleBot(discord.Client):
                             "If you're from the New York Times, please don\'t sue me. :pleading_face:",
                             "What's up?",
                             "*Totally some random statement chosen from a predetermined list*"]
-
+        if message.author.id == 803676742639550544 and message.content == '#em-terminate':
+            await message.reply('Emergency termination.')
+            sys.exit()
+        
         if mention in message.content:
             await message.reply(random.choice(mention_replies))
         
@@ -79,18 +83,22 @@ class WordleBot(discord.Client):
             
             
             guess_list = []
+            valid_word = True
             while gc != word and guess_num <= MAX_TRIES:
                 
-                if gc not in words and gc != '!quit':
-                    await message.reply("That is not in my dictionary.")
-                    continue
-
                 guess_list.append(guess)
                 print("guessing: {}".format(gc))
                 if gc == '!quit':
                     break
-                await message.reply("Guess number {}:\n".format(guess_num)+cp_words(gc,word))
-                guess_num += 1
+
+                if gc not in words and gc != '!quit':
+                    await message.reply("That is not in my dictionary.")
+                    valid_word = False
+                    
+
+                if valid_word:
+                    await message.reply("Guess number {}:\n".format(guess_num)+cp_words(gc,word))
+                    guess_num += 1
                 try:
                     guess = await self.wait_for('message', check=is_correct, timeout=600)
                     gc = guess.content.lower()
