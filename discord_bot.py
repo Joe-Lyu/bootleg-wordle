@@ -83,7 +83,7 @@ class WordleBot(discord.Client):
             
             
             guess_list = []
-            valid_word = True
+
             while gc != word and guess_num <= MAX_TRIES:
                 
                 guess_list.append(guess)
@@ -94,7 +94,8 @@ class WordleBot(discord.Client):
                 if gc not in words and gc != '!quit':
                     await message.reply("That is not in my dictionary.")
                     valid_word = False
-                    
+                else:
+                    valid_word = True
 
                 if valid_word:
                     await message.reply("Guess number {}:\n".format(guess_num)+cp_words(gc,word))
