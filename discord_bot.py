@@ -28,7 +28,8 @@ class WordleBot(discord.Client):
                             "I am not responsible for your limited vocabulary of five-letter words.",
                             "The best starter word for Wordle is \"fuzzy\". Wait, or is that the worst?",
                             "If you're from the New York Times, please don\'t sue me. :pleading_face:",
-                            "What's up?"]
+                            "What's up?",
+                            "*Totally some random statement chosen from a predetermined list*"]
 
         if mention in message.content:
             await message.reply(random.choice(mention_replies))
@@ -47,7 +48,7 @@ class WordleBot(discord.Client):
                 difficultym = await self.wait_for('message',check=is_valid_difficulty,timeout=600)
                 difficulty = difficultym.content.lower()
             except asyncio.TimeoutError:
-                return await message.channel.send("Timed out.")
+                return await message.reply("Timed out.")
             
             from wordle_core import MAX_TRIES
             MAX_TRIES = MAX_TRIES
@@ -74,12 +75,16 @@ class WordleBot(discord.Client):
                 guess = await self.wait_for('message', check=is_correct, timeout=600)
                 gc = guess.content.lower()
             except asyncio.TimeoutError:
-                return await message.channel.send("Timed out. The answer was **{}**".format(word))
+                return await message.reply("Timed out. The answer was **{}**".format(word))
             
-            if gc not in words and gc != '!quit':
-                await message.reply("That is not in my dictionary.")
+            
 
             while gc != word and guess_num <= MAX_TRIES:
+
+                if gc not in words and gc != '!quit':
+                    await message.reply("That is not in my dictionary.")
+                    continue
+
                 print("guessing: {}".format(gc))
                 if gc == '!quit':
                     break
@@ -89,7 +94,7 @@ class WordleBot(discord.Client):
                     guess = await self.wait_for('message', check=is_correct, timeout=600)
                     gc = guess.content.lower()
                 except asyncio.TimeoutError:
-                    return await message.channel.send("Timed out. The answer was **{}**".format(word)) 
+                    return await message.reply("Timed out. The answer was **{}**".format(word)) 
                 
             if word == gc:
                 await message.reply("🟩"*5+"\nYou guessed it in {} tries".format(guess_num))
@@ -117,7 +122,7 @@ class WordleBot(discord.Client):
                 guessm = await self.wait_for('message',check=is_valid_guess, timeout = 600)
                 guess = guessm.content
             except asyncio.TimeoutError:
-                return await message.channel.send("Timed out.")
+                return await message.reply("Timed out.")
             
             print(guess)
 
@@ -126,7 +131,7 @@ class WordleBot(discord.Client):
                 hintm = await self.wait_for('message',check=is_valid_hint,timeout=600)
                 hint = hintm.content
             except asyncio.TimeoutError:
-                return await message.channel.send("Timed out.")
+                return await message.reply("Timed out.")
             
             print(hint)
 
@@ -156,7 +161,7 @@ class WordleBot(discord.Client):
                     guessm = await self.wait_for('message',check=is_valid_guess, timeout = 600)
                     guess = guessm.content
                 except asyncio.TimeoutError:
-                    return await message.channel.send("Timed out.")
+                    return await message.reply("Timed out.")
                     break
                 
                 await message.reply("What are the colors from Wordle?")
@@ -166,7 +171,7 @@ class WordleBot(discord.Client):
                     hintm = await self.wait_for('message',check=is_valid_hint,timeout=600)
                     hint = hintm.content
                 except asyncio.TimeoutError:
-                    return await message.channel.send("Timed out.")
+                    return await message.reply("Timed out.")
                     break
             if hint == 'G'*5:
                 await message.reply("Congrats, you solved it! Well, I solved it, you kinda just put in all the letters and stuff.")
