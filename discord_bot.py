@@ -78,13 +78,14 @@ class WordleBot(discord.Client):
                 return await message.reply("Timed out. The answer was **{}**".format(word))
             
             
-
+            guess_list = []
             while gc != word and guess_num <= MAX_TRIES:
-
+                
                 if gc not in words and gc != '!quit':
                     await message.reply("That is not in my dictionary.")
                     continue
 
+                guess_list.append(guess)
                 print("guessing: {}".format(gc))
                 if gc == '!quit':
                     break
@@ -99,6 +100,10 @@ class WordleBot(discord.Client):
             if word == gc:
                 await message.reply("🟩"*5+"\nYou guessed it in {} tries".format(guess_num))
             elif gc != '!quit':
+                #easter egg :)
+                if guess_list == 'twink'*MAX_TRIES and difficulty == 'hard':
+                    await message.reply("Look, you win, okay? The answer is twink, whatever")
+
                 await message.reply("You failed! The answer is {}".format(word))
             else:
                 await message.reply("Quit the current Wordle game. The answer was {}".format(word))
