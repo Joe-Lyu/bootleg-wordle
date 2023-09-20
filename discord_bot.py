@@ -30,6 +30,9 @@ class WordleBot(discord.Client):
                             "The best starter word for Wordle is \"fuzzy\". Wait, or is that the worst?",
                             "If you're from the New York Times, please don\'t sue me. :pleading_face:",
                             "What's up?",
+                            "Fun fact, the original creator of Wordle, Josh Wardle, has also created the original Place, on Reddit!",
+                            "My dictionary currently contains around 2000 words. More are to come.",
+                            "There are two words that was added to my dictionary manually, by request. Guess which two they are. No, I will not set up a game just for this.",
                             "*Totally some random statement chosen from a predetermined list*"]
         if message.author.id == 803676742639550544 and message.content == '#em-terminate':
             await message.reply('Emergency termination.')
