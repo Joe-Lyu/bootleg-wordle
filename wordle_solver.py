@@ -1,12 +1,13 @@
 from utils import cp_words,score_dict
 
+all_words = score_dict().all_words
 sorted_words = score_dict().sorted_words
 
 answer = input("Wordle answer:\t")
 
-guess = sorted_words[0]
+guess = all_words[0]
 
-filtered_sorted_words = sorted_words
+filtered_sorted_words = all_words
 while guess != answer:
     print(guess)
     print(cp_words(guess,answer))

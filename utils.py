@@ -27,12 +27,14 @@ class score_dict:
     def __init__(self,DF=DF):
 
         self.DF = DF.sort_values('freq').reset_index()
-        self.all_words = list(self.DF['word'])
         self.sorted_words = list(self.DF.loc[self.DF['class']=='La']['word'])
         self.vocab = len(self.sorted_words)
         self.easy_words = self.sorted_words[self.vocab//3*2:]
         self.medium_words = self.sorted_words[self.vocab//3:self.vocab//3*2]
         self.hard_words = self.sorted_words[:self.vocab//3]
+        self.DF = DF.sort_values(['score'],ascending=[False]).reset_index()
+        self.all_words = list(self.DF['word'])
+
     
     def get_score(self,word):
         assert word in self.all_words, "Word is not in Wordle dictionary"

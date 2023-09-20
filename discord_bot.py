@@ -31,7 +31,8 @@ class WordleBot(discord.Client):
                             "If you're from the New York Times, please don\'t sue me. :pleading_face:",
                             "What's up?",
                             "Fun fact, the original creator of Wordle, Josh Wardle, has also created the original Place, on Reddit!",
-                            "My dictionary currently contains around 2000 words. More are to come.",
+                            "https://tweakimp.github.io/unfairwordle/"
+                            "My dictionary currently contains around 12972 words, 2315 of which can be the answers to a game. The rest are rather hard to guess. Unless...",
                             "There are two words that were added to my dictionary manually, by request. Guess which two they are. No, I will not set up a game just for this.",
                             "*Totally some random statement chosen from a predetermined list*"]
         if message.author.id == 803676742639550544 and message.content == '#em-terminate':
@@ -119,6 +120,10 @@ class WordleBot(discord.Client):
                 await message.reply("You failed! The answer is {}".format(word))
             else:
                 await message.reply("Quit the current Wordle game. The answer was {}".format(word))
+
+
+
+
 
         if message.content.startswith('$solve-wordle'):
             await message.reply('Solving an external Wordle game.')
