@@ -8,7 +8,7 @@ import pickle
 import sys
 sd = score_dict()
 words = sd.sorted_words
-
+all_words = sd.all_words
 TOKEN = pickle.load(open('token.pkl','rb')) #not gonna show my token to ya :)
 
 class WordleBot(discord.Client):
@@ -32,7 +32,7 @@ class WordleBot(discord.Client):
                             "What's up?",
                             "Fun fact, the original creator of Wordle, Josh Wardle, has also created the original Place, on Reddit!",
                             "My dictionary currently contains around 2000 words. More are to come.",
-                            "There are two words that was added to my dictionary manually, by request. Guess which two they are. No, I will not set up a game just for this.",
+                            "There are two words that were added to my dictionary manually, by request. Guess which two they are. No, I will not set up a game just for this.",
                             "*Totally some random statement chosen from a predetermined list*"]
         if message.author.id == 803676742639550544 and message.content == '#em-terminate':
             await message.reply('Emergency termination.')
@@ -94,7 +94,7 @@ class WordleBot(discord.Client):
                 if gc == '!quit':
                     break
 
-                if gc not in words and gc != '!quit':
+                if gc not in all_words and gc != '!quit':
                     await message.reply("That is not in my dictionary.")
                     valid_word = False
                 else:
@@ -129,11 +129,11 @@ class WordleBot(discord.Client):
                 return m.author == message.author and (cond or hint=='!quit')
             def is_valid_guess(m):
                 guess = m.content.lower()
-                cond = guess in words
+                cond = guess in all_words
                 return m.author == message.author and (cond or guess=='!quit')
                 
-            filtered_sorted_words = words
-            await message.reply("Current best 5 guesses are:\n"+"\n".join(["**{}**".format(word) for word in words[:5]]))
+            filtered_sorted_words = all_words
+            await message.reply("Current best 5 guesses are:\n"+"\n".join(["**{}**".format(word) for word in all_words[:5]]))
             await message.reply("What is your choice?")
             try:
                 guessm = await self.wait_for('message',check=is_valid_guess, timeout = 600)

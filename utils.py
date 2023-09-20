@@ -26,20 +26,22 @@ DF = pd.read_csv('scores.csv',index_col=0)
 class score_dict:
     def __init__(self,DF=DF):
 
-        self.sorted_words = list(DF['letter'])
         self.DF = DF.sort_values('freq').reset_index()
-        self.easy_words = list(self.DF.iloc[2*len(self.DF)//3:]['letter'])
-        self.medium_words = list(self.DF.iloc[len(self.DF)//3:2*len(self.DF)//3]['letter'])
-        self.hard_words = list(self.DF.iloc[:len(self.DF)//3]['letter'])
+        self.all_words = list(self.DF['word'])
+        self.sorted_words = list(self.DF.loc[self.DF['class']=='La']['word'])
+        self.vocab = len(self.sorted_words)
+        self.easy_words = self.sorted_words[self.vocab//3*2:]
+        self.medium_words = self.sorted_words[self.vocab//3:self.vocab//3*2]
+        self.hard_words = self.sorted_words[:self.vocab//3]
     
     def get_score(self,word):
-        assert word in self.sorted_words, "Word is not in Wordle dictionary"
-        row = self.DF.loc[self.DF['letter']==word]
+        assert word in self.all_words, "Word is not in Wordle dictionary"
+        row = self.DF.loc[self.DF['word']==word]
         return list(row['score'])[-1]
     
     def get_freq(self,word):
-        assert word in self.sorted_words, "Word is not in Wordle dictionary"
-        row = self.DF.loc[self.DF['letter']==word]
+        assert word in self.all_words, "Word is not in Wordle dictionary"
+        row = self.DF.loc[self.DF['word']==word]
         return list(row['freq'])[-1]
     
     def get_difficulty(self,difficulty='random'):
