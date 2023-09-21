@@ -169,8 +169,10 @@ class WordleBot(discord.Client):
                             conds = conds and sw[i] == guess[i]
                         elif hint[i] == 'Y':
                             conds = conds and guess[i] in sw and sw[i] != guess[i]
-                        elif guess[i] not in guess[:i]:
+                        elif guess[i] not in guess[:i] and guess[i] not in guess[i+1:]:
                             conds = conds and guess[i] not in sw
+                        else:
+                            conds = conds and sw[i] != guess[i]
                     if conds:
                         new_filter.append(sw)
                 filtered_sorted_words = new_filter
