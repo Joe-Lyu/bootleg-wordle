@@ -132,7 +132,7 @@ class WordleBot(discord.Client):
             def is_valid_hint(m):
                 hint = m.content.upper()
                 cond = len(hint)==5 and set(hint).issubset(set(('Y','G','?')))
-                return m.author == message.author and (cond or hint=='!quit')
+                return m.author == message.author and (cond or hint=='!QUIT')
             def is_valid_guess(m):
                 guess = m.content.lower()
                 cond = guess in all_words
@@ -152,14 +152,15 @@ class WordleBot(discord.Client):
             await message.reply("What are the colors from Wordle?\nReply \"G\" for green, \"Y\" for yellow, and \"?\" for grey\ne.g. ?YY?G")
             try:
                 hintm = await self.wait_for('message',check=is_valid_hint,timeout=600)
-                hint = hintm.content
+                hint = hintm.content.upper()
             except asyncio.TimeoutError:
                 return await message.reply("Timed out.")
             
             print(hint)
 
             while hint != 'G'*5:
-                if hint == '!quit':
+                if hint == '!QUIT':
+                    await message.reply("Quit current session.")
                     break
                 new_filter = []
                 for sw in filtered_sorted_words:
