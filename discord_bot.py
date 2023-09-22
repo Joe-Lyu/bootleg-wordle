@@ -9,6 +9,7 @@ import sys
 sd = score_dict()
 words = sd.sorted_words
 all_words = sd.all_words
+alt_all_words = sd.alt_all_words
 TOKEN = pickle.load(open('token.pkl','rb')) #not gonna show my token to ya :)
 
 class WordleBot(discord.Client):
@@ -129,10 +130,11 @@ class WordleBot(discord.Client):
 
         if message.content.startswith('$solve-wordle'):
             await message.reply('Solving an external Wordle game.')
+            alg = 'alt_score'
 
             dev = True if 'dev' in message.content else False
-
-            if dev and message.author==joe:
+            
+            if dev and message.author.id == joe:
                 await message.reply("Hi, Joe. Looks like you entered dev mode.")
                 await message.reply("Choose your ranking algorithm")
                 def is_valid_alg(m):
@@ -143,6 +145,7 @@ class WordleBot(discord.Client):
                 except asyncio.TimeoutError:
                     return await message.reply("Timed out.")
 
+                await message.reply("Algorithm chosen: **{}**".format(alg))
 
 
             def is_valid_hint(m):
@@ -154,7 +157,7 @@ class WordleBot(discord.Client):
                 cond = guess in all_words
                 return m.author == message.author and (cond or guess=='!quit')
                 
-            filtered_sorted_words = all_words
+            filtered_sorted_words = all_words if alg == 'score' else alt_all_words
             await message.reply("Current best 5 guesses are:\n"+"\n".join(["**{}**".format(word) for word in all_words[:5]]))
             await message.reply("What is your choice?")
             try:
@@ -213,20 +216,24 @@ class WordleBot(discord.Client):
 
         if message.content.startswith('$challenge-wordle'):
             await message.reply("So you challenged me to a Wordle game!\nTell me the answer and I will show you how I would guess it, using Joe\'s algorithm.")
-            
-            dev = True if 'dev' in message.content else False
+            alg = 'alt_score'
 
-            if dev and message.author==joe:
-                await message.reply("Hi, Joe. Looks like you entered dev mode.")
-                await message.reply("Choose your ranking algorithm")
+            dev = True if 'dev' in message.content else False
+            if dev and message.author.id == joe:
+                print('dev')
+                await message.reply("Hi, Joe. Looks like you entered dev mode.\nChoose your ranking algorithm.")
+                
                 def is_valid_alg(m):
-                    return m.content in ['score','alt_score'] and m.author==message.author
+                    return m.author==message.author and m.content in ['score','alt_score']
                 try:
                     algm = await self.wait_for('message',check=is_valid_alg, timeout = 600)
                     alg = algm.content.lower()
+                    print(alg)
                 except asyncio.TimeoutError:
                     return await message.reply("Timed out.")
                 
+                await message.reply("Algorithm chosen: **{}**".format(alg))
+
             def is_correct(m):
                 return m.author == message.author and len(m.content)==5
             try:
@@ -234,10 +241,10 @@ class WordleBot(discord.Client):
                 answer = answerm.content.lower()
             except asyncio.TimeoutError:
                 return await message.reply("Timed out.")
-            
-            guess = all_words[0]
 
-            filtered_sorted_words = all_words
+            filtered_sorted_words = all_words if alg == 'score' else alt_all_words
+            
+            guess = filtered_sorted_words[0]
             while guess != answer:
                 await message.reply(guess+'\n'+cp_words(guess,answer))
                 #await message.reply('Calculating next best move...')

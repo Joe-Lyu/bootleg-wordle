@@ -32,8 +32,10 @@ class score_dict:
         self.easy_words = self.sorted_words[self.vocab//3*2:]
         self.medium_words = self.sorted_words[self.vocab//3:self.vocab//3*2]
         self.hard_words = self.sorted_words[:self.vocab//3]
-        self.DF = DF.sort_values(['alt_score']).reset_index()
+        self.DF = DF.sort_values(['score'],ascending=[False]).reset_index()
         self.all_words = list(self.DF['word'])
+        self.alt_DF = DF.sort_values(['alt_score'],ascending=[True])
+        self.alt_all_words = list(self.alt_DF['word'])
 
     
     def get_score(self,word):
