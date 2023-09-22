@@ -1,7 +1,7 @@
 # bot.py
 import discord
 from utils import cp_words,score_dict
-from wordle_core import rank_words
+from wordle_core import rank_words,get_remaining
 import random
 import asyncio
 import pickle
@@ -27,7 +27,7 @@ class WordleBot(discord.Client):
                             "WHat",
                             "Please go to Joe for complaints.",
                             "I am not responsible for your limited vocabulary of five-letter words.",
-                            "The best starter word for Wordle is \"fuzzy\". Wait, or is that the worst?",
+                            "The best starter word for Wordle is \"esses\". Wait, or is that the worst?",
                             "If you're from the New York Times, please don\'t sue me. :pleading_face:",
                             "What's up?",
                             "Fun fact, the original creator of Wordle, Josh Wardle, has also created the original Place, on Reddit!",
@@ -179,20 +179,47 @@ class WordleBot(discord.Client):
                     guess = guessm.content
                 except asyncio.TimeoutError:
                     return await message.reply("Timed out.")
-                    break
-                
-                await message.reply("What are the colors from Wordle?")
+
                 if guess == '!quit':
                     break
+                await message.reply("What are the colors from Wordle?")
+                
                 try:
                     hintm = await self.wait_for('message',check=is_valid_hint,timeout=600)
                     hint = hintm.content
                 except asyncio.TimeoutError:
                     return await message.reply("Timed out.")
-                    break
             if hint == 'G'*5:
                 await message.reply("Congrats, you solved it! Well, I solved it, you kinda just put in all the letters and stuff.")
 
+
+
+        if message.content.startswith('$challenge-wordle'):
+            await message.reply("So you challenged me to a Wordle game!\nTell me the answer and I will show you how I would guess it, using Joe\'s algorithm.")
+            
+            def is_correct(m):
+                return m.author == message.author and len(m.content)==5
+            try:
+                answerm = await self.wait_for('message', check=is_correct, timeout=600)
+                answer = answerm.content.lower()
+            except asyncio.TimeoutError:
+                return await message.reply("Timed out.")
+            
+            guess = all_words[0]
+
+            filtered_sorted_words = all_words
+            while guess != answer:
+                await message.reply(guess+'\n'+cp_words(guess,answer))
+                #await message.reply('Calculating next best move...')
+                hints = cp_words(guess,answer)
+                filtered_sorted_words = rank_words(filtered_sorted_words,
+                                                hints,
+                                                guess)
+                filtered_sorted_words.sort(key=lambda w: get_remaining(w,filtered_sorted_words))
+                guess = filtered_sorted_words[0]
+            
+            await message.reply(guess+'\n'+cp_words(guess,answer))
+            await message.reply("I got it!")
 
 
 

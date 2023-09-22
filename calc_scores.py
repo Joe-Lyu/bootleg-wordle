@@ -1,7 +1,8 @@
 from tqdm import tqdm
 import pandas as pd
 from wordfreq import word_frequency
-import math
+from wordle_core import get_remaining
+from multiprocessing import Pool
 SCORE_FRAC = 0.2 #cannot be 1
 
 vowels = set({'a','e','i','o','u'})
@@ -10,7 +11,6 @@ def calc_decay(v,l):
     return v*(SCORE_FRAC**l - 1)/(SCORE_FRAC-1)
 
 def score_function(rank):
-    # return math.tanh(rank/10)
     return rank
 
 
@@ -38,44 +38,48 @@ def eval_freq(word):
     score *= vowel_count
     return score
 
-letterdict = {}
+if __name__ == "__main__":
+    letterdict = {}
 
-for word in tqdm(Lawordlist):
-    for letter in word:
-            if letter not in letterdict:
-                letterdict[letter] = 1
-            else:
-                letterdict[letter] += 1
+    for word in tqdm(Lawordlist):
+        for letter in word:
+                if letter not in letterdict:
+                    letterdict[letter] = 1
+                else:
+                    letterdict[letter] += 1
 
-letterdict = dict(sorted(letterdict.items(), key=lambda item: item[1]))
-valuedict = {}
+    letterdict = dict(sorted(letterdict.items(), key=lambda item: item[1]))
+    valuedict = {}
 
-L = list(letterdict.keys())
+    L = list(letterdict.keys())
 
-print(letterdict)
-for i in range(len(L)):
-    valuedict[L[i]] = score_function(i+1)
+    for i in range(len(L)):
+        valuedict[L[i]] = score_function(i+1)
 
-scoredict = {}
-for word in tqdm(wordlist):
-    scoredict[word] = eval_freq(word)
+    scoredict = {}
+    for word in tqdm(wordlist):
+        scoredict[word] = eval_freq(word)
 
-scoredict = dict(sorted(scoredict.items(), key=lambda item: item[1]))
-letters = list(scoredict.keys())
-scores = list(scoredict.values())
-letters.reverse()
-scores.reverse()
+    scoredict = dict(sorted(scoredict.items(), key=lambda item: item[1]))
+    letters = list(scoredict.keys())
+    scores = list(scoredict.values())
+    letters.reverse()
+    scores.reverse()
 
-score_df = pd.DataFrame.from_dict({"word": letters,
-                                   "score": scores})
+    score_df = pd.DataFrame.from_dict({"word": letters,
+                                    "score": scores})
 
-score_df['freq'] = [word_frequency(word,'en') for word in letters]
+    score_df['freq'] = [word_frequency(word,'en') for word in letters]
 
-classlist = []
-for index,row in score_df.iterrows():
-    if row['word'] in Lawordlist:
-        classlist.append('La')
-    else:
-        classlist.append('Ta')
-score_df['class'] = classlist
-score_df.to_csv('scores.csv')
+    classlist = []
+    for index,row in score_df.iterrows():
+        if row['word'] in Lawordlist:
+            classlist.append('La')
+        else:
+            classlist.append('Ta')
+    score_df['class'] = classlist
+
+    with Pool() as p:
+        score_df['alt_score'] = list(tqdm(p.imap(get_remaining,letters)))
+
+    score_df.to_csv('scores.csv')
