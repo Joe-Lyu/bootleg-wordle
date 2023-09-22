@@ -1,7 +1,7 @@
 # bot.py
 import discord
 from utils import cp_words,score_dict
-
+from wordle_core import rank_words
 import random
 import asyncio
 import pickle
@@ -143,7 +143,7 @@ class WordleBot(discord.Client):
             await message.reply("What is your choice?")
             try:
                 guessm = await self.wait_for('message',check=is_valid_guess, timeout = 600)
-                guess = guessm.content
+                guess = guessm.content.lower()
             except asyncio.TimeoutError:
                 return await message.reply("Timed out.")
             
@@ -162,21 +162,12 @@ class WordleBot(discord.Client):
                 if hint == '!QUIT':
                     await message.reply("Quit current session.")
                     break
-                new_filter = []
-                for sw in filtered_sorted_words:
-                    conds = True
-                    for i in range(5):
-                        if hint[i] == 'G':
-                            conds = conds and sw[i] == guess[i]
-                        elif hint[i] == 'Y':
-                            conds = conds and guess[i] in sw and sw[i] != guess[i]
-                        elif guess[i] not in guess[:i] and guess[i] not in guess[i+1:]:
-                            conds = conds and guess[i] not in sw
-                        else:
-                            conds = conds and sw[i] != guess[i]
-                    if conds:
-                        new_filter.append(sw)
-                filtered_sorted_words = new_filter
+                
+                filtered_sorted_words = rank_words(filtered_sorted_words,
+                                                   hint,
+                                                   guess,
+                                                   symbolset=False)
+
                 if len(filtered_sorted_words) == 1:
                     await message.reply("Only possible answer is: \t"+filtered_sorted_words[0])
                     break

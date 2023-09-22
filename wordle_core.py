@@ -26,3 +26,24 @@ def main(answer,MAX_TRIES = MAX_TRIES):
 
     else:
         print("You failed! The answer is {}".format(answer))
+
+def rank_words(filtered_sorted_words,hint,guess,symbolset=True):
+    if symbolset:
+        symbols = ['🟩','🟨','⬜']
+    else:
+        symbols = ['G','Y','?']
+    new_filter = []
+    for sw in filtered_sorted_words:
+        conds = True
+        for i in range(5):
+            if hint[i] == symbols[0]:
+                conds = conds and sw[i] == guess[i]
+            elif hint[i] == symbols[1]:
+                conds = conds and guess[i] in sw and sw[i] != guess[i]
+            elif guess[i] not in guess[:i] and guess[i] not in guess[i+1:]:
+                conds = conds and guess[i] not in sw
+            else:
+                conds = conds and sw[i] != guess[i]
+        if conds:
+            new_filter.append(sw)
+    return new_filter

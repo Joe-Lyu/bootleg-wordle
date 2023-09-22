@@ -1,4 +1,5 @@
 from utils import score_dict
+from wordle_core import rank_words
 sorted_words = score_dict().sorted_words
 
 def convert_input_to_hint():
@@ -24,20 +25,9 @@ guess = input_guess()
 hint = convert_input_to_hint()
 filtered_sorted_words = sorted_words
 while hint != '🟩'*5:
-    new_filter = []
-    for sw in filtered_sorted_words:
-        conds = True
-        for i in range(5):
-            if hint[i] == '🟩':
-                conds = conds and sw[i] == guess[i]
-            elif hint[i] == '🟨':
-                conds = conds and guess[i] in sw and sw[i] != guess[i]
-            elif guess[i] not in guess[:i]:
-                conds = conds and guess[i] not in sw
-        if conds:
-            new_filter.append(sw)
-    
-    filtered_sorted_words = new_filter
+    filtered_sorted_words = rank_words(filtered_sorted_words,
+                                       hint,
+                                       guess)
     if len(filtered_sorted_words) == 1:
         print("Only possible answer is: \t"+filtered_sorted_words[0])
         break
