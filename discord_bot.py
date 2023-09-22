@@ -19,6 +19,7 @@ class WordleBot(discord.Client):
     
 
     async def on_message(self, message):
+        joe = 803676742639550544
         # we do not want the bot to reply to itself
         if message.author.id == self.user.id:
             return
@@ -35,7 +36,7 @@ class WordleBot(discord.Client):
                             "My dictionary currently contains around 12972 words, 2315 of which can be the answers to a game. The rest are rather hard to guess. Unless...",
                             "There are two words that were added to my dictionary manually, by request. Guess which two they are. No, I will not set up a game just for this.",
                             "*Totally some random statement chosen from a predetermined list*"]
-        if message.author.id == 803676742639550544 and message.content == '#em-terminate':
+        if message.author.id == joe and message.content == '#em-terminate':
             await message.reply('Emergency termination.')
             sys.exit()
         
@@ -129,6 +130,21 @@ class WordleBot(discord.Client):
         if message.content.startswith('$solve-wordle'):
             await message.reply('Solving an external Wordle game.')
 
+            dev = True if 'dev' in message.content else False
+
+            if dev and message.author==joe:
+                await message.reply("Hi, Joe. Looks like you entered dev mode.")
+                await message.reply("Choose your ranking algorithm")
+                def is_valid_alg(m):
+                    return m.content in ['score','alt_score'] and m.author==message.author
+                try:
+                    algm = await self.wait_for('message',check=is_valid_alg, timeout = 600)
+                    alg = algm.content.lower()
+                except asyncio.TimeoutError:
+                    return await message.reply("Timed out.")
+
+
+
             def is_valid_hint(m):
                 hint = m.content.upper()
                 cond = len(hint)==5 and set(hint).issubset(set(('Y','G','?')))
@@ -166,6 +182,7 @@ class WordleBot(discord.Client):
                 filtered_sorted_words = rank_words(filtered_sorted_words,
                                                    hint,
                                                    guess,
+                                                   alg=alg,
                                                    symbolset=False)
 
                 if len(filtered_sorted_words) == 1:
@@ -197,6 +214,19 @@ class WordleBot(discord.Client):
         if message.content.startswith('$challenge-wordle'):
             await message.reply("So you challenged me to a Wordle game!\nTell me the answer and I will show you how I would guess it, using Joe\'s algorithm.")
             
+            dev = True if 'dev' in message.content else False
+
+            if dev and message.author==joe:
+                await message.reply("Hi, Joe. Looks like you entered dev mode.")
+                await message.reply("Choose your ranking algorithm")
+                def is_valid_alg(m):
+                    return m.content in ['score','alt_score'] and m.author==message.author
+                try:
+                    algm = await self.wait_for('message',check=is_valid_alg, timeout = 600)
+                    alg = algm.content.lower()
+                except asyncio.TimeoutError:
+                    return await message.reply("Timed out.")
+                
             def is_correct(m):
                 return m.author == message.author and len(m.content)==5
             try:
@@ -214,7 +244,8 @@ class WordleBot(discord.Client):
                 hints = cp_words(guess,answer)
                 filtered_sorted_words = rank_words(filtered_sorted_words,
                                                 hints,
-                                                guess)
+                                                guess,
+                                                alg=alg)
                 
                 guess = filtered_sorted_words[0]
             

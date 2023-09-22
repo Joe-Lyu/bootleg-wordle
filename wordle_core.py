@@ -29,7 +29,7 @@ def main(answer,MAX_TRIES = MAX_TRIES):
     else:
         print("You failed! The answer is {}".format(answer))
 
-def rank_words(filtered_sorted_words,hint,guess,symbolset=True,recursive=True):
+def rank_words(filtered_sorted_words,hint,guess,alg='alt_score',symbolset=True,recursive=True):
     if symbolset:
         symbols = ['🟩','🟨','⬜']
     else:
@@ -48,7 +48,7 @@ def rank_words(filtered_sorted_words,hint,guess,symbolset=True,recursive=True):
                 conds = conds and sw[i] != guess[i]
         if conds:
             new_filter.append(sw)
-    if recursive:
+    if recursive and alg=='alt_score':
         new_filter.sort(key=lambda w: get_remaining(w,new_filter))
     return new_filter
 
