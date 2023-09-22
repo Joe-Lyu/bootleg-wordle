@@ -29,7 +29,7 @@ def main(answer,MAX_TRIES = MAX_TRIES):
     else:
         print("You failed! The answer is {}".format(answer))
 
-def rank_words(filtered_sorted_words,hint,guess,symbolset=True):
+def rank_words(filtered_sorted_words,hint,guess,symbolset=True,recursive=True):
     if symbolset:
         symbols = ['🟩','🟨','⬜']
     else:
@@ -48,7 +48,8 @@ def rank_words(filtered_sorted_words,hint,guess,symbolset=True):
                 conds = conds and sw[i] != guess[i]
         if conds:
             new_filter.append(sw)
-    #new_filter.sort(key=lambda w: get_remaining(new_filter,w))
+    if recursive:
+        new_filter.sort(key=lambda w: get_remaining(w,new_filter))
     return new_filter
 
 def get_remaining(guess,filtered_sorted_words=words):
@@ -57,6 +58,6 @@ def get_remaining(guess,filtered_sorted_words=words):
         all_possible_hints += list(set(permutations(p)))
     possibilities_left = []
     for hint in all_possible_hints:
-        possibilities_left.append(len(rank_words(filtered_sorted_words,hint,guess,symbolset=False)))
+        possibilities_left.append(len(rank_words(filtered_sorted_words,hint,guess,symbolset=False,recursive=False)))
     score = stdev(possibilities_left) * sum(possibilities_left) / 1000
     return score

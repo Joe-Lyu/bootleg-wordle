@@ -93,7 +93,7 @@ class WordleBot(discord.Client):
                 guess_list.append(guess.content.lower())
                 print("guessing: {}".format(gc))
                 if gc == '!quit':
-                    break
+                    return
 
                 if gc not in all_words and gc != '!quit':
                     await message.reply("That is not in my dictionary.")
@@ -161,7 +161,7 @@ class WordleBot(discord.Client):
             while hint != 'G'*5:
                 if hint == '!QUIT':
                     await message.reply("Quit current session.")
-                    break
+                    return
                 
                 filtered_sorted_words = rank_words(filtered_sorted_words,
                                                    hint,
@@ -170,7 +170,7 @@ class WordleBot(discord.Client):
 
                 if len(filtered_sorted_words) == 1:
                     await message.reply("Only possible answer is: \t"+filtered_sorted_words[0])
-                    break
+                    return
                 await message.reply("Current best 5 guesses are:\n"+"\n".join(["**{}**".format(word) for word in filtered_sorted_words[:5]]))
                 await message.reply("What is your choice?")
                 try:
@@ -181,7 +181,7 @@ class WordleBot(discord.Client):
                     return await message.reply("Timed out.")
 
                 if guess == '!quit':
-                    break
+                    return
                 await message.reply("What are the colors from Wordle?")
                 
                 try:
@@ -215,7 +215,7 @@ class WordleBot(discord.Client):
                 filtered_sorted_words = rank_words(filtered_sorted_words,
                                                 hints,
                                                 guess)
-                filtered_sorted_words.sort(key=lambda w: get_remaining(w,filtered_sorted_words))
+                
                 guess = filtered_sorted_words[0]
             
             await message.reply(guess+'\n'+cp_words(guess,answer))
