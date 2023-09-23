@@ -135,8 +135,7 @@ class WordleBot(discord.Client):
             dev = True if 'dev' in message.content else False
             
             if dev and message.author.id == joe:
-                await message.reply("Hi, Joe. Looks like you entered dev mode.")
-                await message.reply("Choose your ranking algorithm")
+                await message.reply("Hi, Joe. Looks like you entered dev mode\nChoose your ranking algorithm")
                 def is_valid_alg(m):
                     return m.content in ['score','alt_score'] and m.author==message.author
                 try:
@@ -241,6 +240,14 @@ class WordleBot(discord.Client):
                 answer = answerm.content.lower()
             except asyncio.TimeoutError:
                 return await message.reply("Timed out.")
+            
+            while answer not in words:
+                await message.reply("Word is not in dictionary.")
+                try:
+                    answerm = await self.wait_for('message', check=is_correct, timeout=600)
+                    answer = answerm.content.lower()
+                except asyncio.TimeoutError:
+                    return await message.reply("Timed out.")
 
             filtered_sorted_words = all_words if alg == 'score' else alt_all_words
             
