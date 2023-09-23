@@ -1,3 +1,5 @@
+from typing import Dict, List, Any
+
 from utils import cp_words, score_dict
 from itertools import permutations, combinations_with_replacement
 from statistics import stdev
@@ -84,10 +86,6 @@ def rank_words(filtered_sorted_words, hint, guess, alg='alt_score', symbolset=Tr
     if recursive and alg == 'alt_score':
         if rubric == "stdev":
             new_filter.sort(key=lambda w: get_remaining(w, new_filter))
-        elif rubric == "xent":
-            new_word_filter = new_filter.copy()
-            new_filter.sort(key=lambda w: get_score_using_cross_entropy(w, new_word_filter))
-
     return new_filter
 
 def filter_words_unsorted(current_word_list, hint, guess, symbolset=True):
@@ -124,6 +122,8 @@ def filter_words_unsorted(current_word_list, hint, guess, symbolset=True):
         if conds:
             new_filter.append(sw)
 
+    # new_word_filter = new_filter.copy()
+    # next_guess = max(new_filter, key=lambda w: get_score_using_cross_entropy(w, new_word_filter))
     return new_filter
 
 
@@ -136,13 +136,27 @@ def cross_entropy(p, q):
     return -np.sum(p * np.log(q + 1e-15)) # adding a small value to avoid log(0)
 
 
+def list_to_string(new_hint_list):
+    a = ""
+    for hint in new_hint_list:
+        a+=hint
+    return a
+
+
 def get_score_using_cross_entropy(guess, filtered_sorted_words=words):
-    all_possible_hints = []
+    all_possible_hints: dict[str, list[str]] = {}
     for p in list(combinations_with_replacement(['G', 'Y', '?'], 5)):
-        all_possible_hints += list(set(permutations(p)))
+        new_hint_perm = list(set(permutations(p)))
+        for new_hint in new_hint_perm:
+            all_possible_hints[list_to_string(new_hint)] = []
     possibilities_left = []
-    for hint in all_possible_hints:
-        possibilities_left.append(len(filter_words_unsorted(filtered_sorted_words, hint, guess, symbolset=False)))
+    for word in filtered_sorted_words:
+        hint = cp_words(guess, word, symbolSet=False)
+        all_possible_hints[list_to_string(hint)].append(word)
+
+
+    for hint in all_possible_hints: #DONE: make it linear
+        possibilities_left.append(len(all_possible_hints[hint]))
 
     total_possibilities = sum(possibilities_left)
     p = np.array(possibilities_left) / total_possibilities  # Normalize the distribution

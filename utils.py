@@ -1,7 +1,7 @@
 import pandas as pd
 import random
 
-def cp_words(word, answer):
+def cp_words(word, answer, symbolSet = True):
     """
     Compare the guessed word to the answer and provide hints based on matching characters.
 
@@ -29,7 +29,15 @@ def cp_words(word, answer):
                 if answer[j] == char:
                     hint[i] = '🟨'
                     answer[j] = '_'
-    return ''.join(hint)
+    if(symbolSet):
+        return ''.join(hint)
+    symMap = {'🟩':'G','🟨':'Y','⬜':'?'}
+    a=''
+    for h in hint:
+        a += (symMap[h])
+    return a
+
+
 
 
 DF = pd.read_csv('scores.csv', index_col=0)
