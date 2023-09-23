@@ -241,13 +241,17 @@ class WordleBot(discord.Client):
             except asyncio.TimeoutError:
                 return await message.reply("Timed out.")
             
-            while answer not in words:
+            while answer not in all_words and answer != '!quit':
                 await message.reply("Word is not in dictionary.")
                 try:
                     answerm = await self.wait_for('message', check=is_correct, timeout=600)
                     answer = answerm.content.lower()
                 except asyncio.TimeoutError:
                     return await message.reply("Timed out.")
+
+            if answer=='!quit':
+                await message.reply("Quit session.")
+                return
 
             filtered_sorted_words = all_words if alg == 'score' else alt_all_words
             
