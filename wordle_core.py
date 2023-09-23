@@ -48,9 +48,9 @@ def main(answer, MAX_TRIES=MAX_TRIES):
         print("You failed! The answer is {}".format(answer))
 
 
-def rank_words(filtered_sorted_words, hint, guess, alg='alt_score', symbolset=True, recursive=True):
+def rank_words(filtered_sorted_words, hint, guess, alg='alt_score', symbolset=True, recursive=True, rubric="stdev"):
     """
-    filter words based on given hints(outcome) and the chosen algorithm.
+    filter words based on current information (word, hints/outcome) and the chosen algorithm.
 
     Args:
         filtered_sorted_words (list): List of words filtered based on previous guesses and hints.
@@ -82,8 +82,74 @@ def rank_words(filtered_sorted_words, hint, guess, alg='alt_score', symbolset=Tr
         if conds:
             new_filter.append(sw)
     if recursive and alg == 'alt_score':
-        new_filter.sort(key=lambda w: get_remaining(w, new_filter))
+        if rubric == "stdev":
+            new_filter.sort(key=lambda w: get_remaining(w, new_filter))
+        elif rubric == "xent":
+            new_word_filter = new_filter.copy()
+            new_filter.sort(key=lambda w: get_score_using_cross_entropy(w, new_word_filter))
+
     return new_filter
+
+def filter_words_unsorted(current_word_list, hint, guess, symbolset=True):
+    """
+    filter words based on current information (word, hints/outcome) and the chosen algorithm.
+
+    Args:
+        current_word_list (list): List of words filtered based on previous guesses and hints.
+        hint (list): List of symbols indicating the status of previous guesses.
+        guess (str): The previous word guess associate with the hint.
+        alg (str, optional): The chosen ranking algorithm. Defaults to 'alt_score'.
+        symbolset (bool, optional): Flag to use emoji symbols or plain text symbols. Defaults to True.
+        recursive (bool, optional): Flag to perform recursive ranking. Defaults to True.
+
+    Returns:
+        list: A filtered list of words taht still satisfy the specified criteria (hint, guess).
+    """
+    if symbolset:
+        symbols = ['🟩', '🟨', '⬜']
+    else:
+        symbols = ['G', 'Y', '?']
+    new_filter = []
+    for sw in current_word_list:
+        conds = True
+        for i in range(5):
+            if hint[i] == symbols[0]:
+                conds = conds and sw[i] == guess[i]
+            elif hint[i] == symbols[1]:
+                conds = conds and guess[i] in sw and sw[i] != guess[i]
+            elif guess[i] not in guess[:i] and guess[i] not in guess[i + 1:]:
+                conds = conds and guess[i] not in sw
+            else:
+                conds = conds and sw[i] != guess[i]
+        if conds:
+            new_filter.append(sw)
+
+    return new_filter
+
+
+import numpy as np
+
+def cross_entropy(p, q):
+    """
+    Calculate the cross entropy between two distributions p and q.
+    """
+    return -np.sum(p * np.log(q + 1e-15)) # adding a small value to avoid log(0)
+
+
+def get_score_using_cross_entropy(guess, filtered_sorted_words=words):
+    all_possible_hints = []
+    for p in list(combinations_with_replacement(['G', 'Y', '?'], 5)):
+        all_possible_hints += list(set(permutations(p)))
+    possibilities_left = []
+    for hint in all_possible_hints:
+        possibilities_left.append(len(filter_words_unsorted(filtered_sorted_words, hint, guess, symbolset=False)))
+
+    total_possibilities = sum(possibilities_left)
+    p = np.array(possibilities_left) / total_possibilities  # Normalize the distribution
+    q = np.ones_like(p) / len(p)  # Ideal uniform distribution
+
+    score = cross_entropy(p, q)
+    return score
 
 
 def get_remaining(guess, filtered_sorted_words=words):

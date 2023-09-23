@@ -21,7 +21,7 @@ while guess != answer:
     filtered_sorted_words = rank_words(filtered_sorted_words,
                                        hints,
                                        guess,
-                                       alg=alg)
+                                       alg=alg,rubric="xent")
     guess = filtered_sorted_words[0]
 
 print(guess+'\n'+cp_words(guess,answer))

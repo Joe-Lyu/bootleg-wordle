@@ -1,7 +1,7 @@
 from tqdm import tqdm
 import pandas as pd
 from wordfreq import word_frequency
-from wordle_core import get_remaining
+from wordle_core import get_remaining, get_score_using_cross_entropy
 from multiprocessing import Pool
 SCORE_FRAC = 0.2 #cannot be 1
 

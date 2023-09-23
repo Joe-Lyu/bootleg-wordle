@@ -1,7 +1,7 @@
 # bot.py
 import discord
 from utils import cp_words,score_dict
-from wordle_core import rank_words,get_remaining
+from wordle_core import rank_words,get_remaining, get_score_using_cross_entropy
 import random
 import asyncio
 import pickle
