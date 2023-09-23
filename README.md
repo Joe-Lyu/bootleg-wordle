@@ -43,7 +43,7 @@ To calculate how effective a guess is in general, we then calculate the standard
 
 I wrote all of these functionalities, and more, into a Discord bot! The bot is being regularly maintained and updated, and hosted on my very own home PC. Due to the nature of me being an undergrad college student, the bot may go offline unexpectedly, but I will try to keep it up for as long as I can. Add it to your server [here](https://discord.com/oauth2/authorize?client_id=1153245754207518820&permissions=68608&scope=bot).
 
-If you find any bugs in the bot at any point, which I am certain there will be a fair amount of, or have ideas and suggestions towards the bot, feel free to contact me here on GitHub, or [add me on Discord](discordapp.com/users/803676742639550544).
+If you find any bugs in the bot at any point, which I am certain there will be a fair amount of, or have ideas and suggestions towards the bot, feel free to contact me here on GitHub, or [add me on Discord](https://discordapp.com/users/803676742639550544).
 
 #### Bot Commands
 
