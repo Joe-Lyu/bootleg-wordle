@@ -5,9 +5,11 @@ Have you ever played the word game Wordle and thought, "hey, there probably is a
 
 No? Fine, but I have. And that thought led to this repo!  
 
-I downloaded the dictionary Wordle uses from [here](https://gist.github.com/scholtes/94f3c0303ba6a7768b47583aff36654d), and wrote two algorithms to rank every valid word in the dictionary by how optimal it is as a guess.  
+---
 
 ### Ranking Algorithms
+
+I downloaded the dictionary Wordle uses from [here](https://gist.github.com/scholtes/94f3c0303ba6a7768b47583aff36654d), and wrote two algorithms to rank every valid word in the dictionary by how optimal it is as a guess.  
 
 The first algorithm assigns a value (1~26) to the 26 letters, by the amount of times they appear in words in the dictionary that makes up all possible Wordle answers. The score of a word is calculated by adding all the scores of individual letters up, while applying an exponential decay to repeating letters to discourage them from wasting space for guessing more letters. For example, the second time the same letter appears in a word, its score gets divided by 2; the third time it appears, its score gets divided by 4, and so on. This makes the algorithm suggest words with the most unique, common letters. 
 
@@ -16,6 +18,8 @@ For an extreme example, let's say we invent a 27th letter, "@", and trick Wordle
 To calculate how effective a guess is in general, we then calculate the standard deviataion of the 243 outcomes as a metric of how much variation there is among them. A higher variation means more varied outcomes, and an ineffective guess, and vice versa. We then calculate this score for every guessable word in the dictionary - around twelve thousand words - and rank them. (This takes quite a lot of time due to how computationally complex this is, and even with multiprocessing and a pretty darn good CPU, it took 9 minutes to run.)
 
 (solver gif)
+
+---
 
 ### Terminal-line Program Functionalities
 
@@ -28,6 +32,8 @@ To calculate how effective a guess is in general, we then calculate the standard
 - `wordle_help.py` is basically a cheat for any Wordle game, official or otherwise. Using an algorithm of your choice, the program provides suggestions for optimal guesses for your consideration for each step along the way. It needs each of your guesses and each outcome from the game as inputs.
 
 - `wordle_solver.py` solves a Wordle game with your input as the answer, using an algorithm of your choice.
+
+---
 
 ### Discord bot
 
