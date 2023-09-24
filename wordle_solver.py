@@ -16,7 +16,7 @@ from wordle_core import rank_words, filter_words_unsorted, get_score_using_cross
 #     return wrapper
 # print = verbose_decorator(print)
 
-def main_solve(answer, alg, rubric):
+def main_solve(answer, alg, rubric, verbose=True): #silence output for multiprocessing
     sd = score_dict()
     all_words = sd.all_words
     alt_all_words = sd.alt_all_words
@@ -29,9 +29,12 @@ def main_solve(answer, alg, rubric):
     step_cnt = 0
     while guess != answer:
         step_cnt += 1
-        print(f" step: {step_cnt}")
-        print(guess)
-        print(cp_words(guess, answer))
+
+        if verbose:
+            print(f" step: {step_cnt}")
+            print(guess)
+            print(cp_words(guess, answer))
+
         hints = cp_words(guess, answer)
         if (rubric == "xent"):
             filtered_sorted_words = filter_words_unsorted(filtered_sorted_words,
@@ -46,8 +49,9 @@ def main_solve(answer, alg, rubric):
                                                alg=alg, rubric=rubric)
             guess = filtered_sorted_words[0]
     step_cnt += 1
-    print(guess + '\n' + cp_words(guess, answer))
-    print(f"total step: {step_cnt}")
+    if verbose:
+        print(guess + '\n' + cp_words(guess, answer))
+        print(f"total step: {step_cnt}")
     return step_cnt
 
 
