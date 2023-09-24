@@ -1,7 +1,7 @@
 # bot.py
 import discord
 from utils import cp_words,score_dict
-from wordle_core import rank_words,get_remaining
+from wordle_core import rank_words
 import random
 import asyncio
 import pickle
@@ -33,7 +33,7 @@ class WordleBot(discord.Client):
                             "If you're from the New York Times, please don\'t sue me. :pleading_face:",
                             "What's up?",
                             "Fun fact, the original creator of Wordle, Josh Wardle, has also created the original Place, on Reddit!",
-                            "https://tweakimp.github.io/unfairwordle/"
+                            "https://tweakimp.github.io/unfairwordle/",
                             "My dictionary currently contains around 12972 words, 2315 of which can be the answers to a game. The rest are rather hard to guess. Unless...",
                             "There are two words that were added to my dictionary manually, by request. Guess which two they are. No, I will not set up a game just for this.",
                             "*Totally some random statement chosen from a predetermined list*"]
@@ -125,7 +125,7 @@ class WordleBot(discord.Client):
                 await message.reply("Quit the current Wordle game. The answer was **{}**".format(word))
 
 
-
+#------------------------------
 
 
         if message.content.startswith('$solve-wordle'):
@@ -212,6 +212,8 @@ class WordleBot(discord.Client):
                 await message.reply("Congrats, you solved it! Well, I solved it, you kinda just put in all the letters and stuff.")
 
 
+#------------------------------
+
 
         if message.content.startswith('$challenge-wordle'):
             await message.reply("So you challenged me to a Wordle game!\nTell me the answer and I will show you how I would guess it, using Joe\'s algorithm.")
@@ -258,7 +260,6 @@ class WordleBot(discord.Client):
             guess = filtered_sorted_words[0]
             while guess != answer:
                 await message.reply(guess+'\n'+cp_words(guess,answer))
-                #await message.reply('Calculating next best move...')
                 hints = cp_words(guess,answer)
                 filtered_sorted_words = rank_words(filtered_sorted_words,
                                                 hints,
