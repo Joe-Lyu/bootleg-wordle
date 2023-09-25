@@ -95,7 +95,7 @@ class WordleBot(discord.Client):
                 guess_list.append(guess.content.lower())
                 print("guessing: {}".format(gc))
                 if gc == '!quit':
-                    return
+                    break
 
                 if gc not in all_words and gc != '!quit':
                     await message.reply("That is not in my dictionary.")
