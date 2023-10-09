@@ -25,6 +25,11 @@ class WordleBot(discord.Client):
         if message.author.id == self.user.id:
             return
         mention = "@"+str(self.user.id)
+        if message.author.id == joe and '#terminate' in message.content and mention in message.content:
+            await message.reply('Emergency termination.')
+            sys.exit()
+            
+
         mention_replies = ["I will now hack your servers.",
                             "WHat",
                             "Please go to Joe for complaints.",
@@ -37,9 +42,7 @@ class WordleBot(discord.Client):
                             "My dictionary currently contains around 12972 words, 2315 of which can be the answers to a game. The rest are rather hard to guess. Unless...",
                             "There are two words that were added to my dictionary manually, by request. Guess which two they are. No, I will not set up a game just for this.",
                             "*Totally some random statement chosen from a predetermined list*"]
-        if message.author.id == joe and message.content == '#em-terminate':
-            await message.reply('Emergency termination.')
-            sys.exit()
+        
         
         if mention in message.content:
             await message.reply(random.choice(mention_replies))
