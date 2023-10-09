@@ -25,6 +25,11 @@ class WordleBot(discord.Client):
         if message.author.id == self.user.id:
             return
         mention = "@"+str(self.user.id)
+        if message.author.id == joe and '#terminate' in message.content and mention in message.content:
+            await message.reply('Emergency termination.')
+            sys.exit()
+            
+
         mention_replies = ["I will now hack your servers.",
                             "WHat",
                             "Please go to Joe for complaints.",
@@ -37,9 +42,7 @@ class WordleBot(discord.Client):
                             "My dictionary currently contains around 12972 words, 2315 of which can be the answers to a game. The rest are rather hard to guess. Unless...",
                             "There are two words that were added to my dictionary manually, by request. Guess which two they are. No, I will not set up a game just for this.",
                             "*Totally some random statement chosen from a predetermined list*"]
-        if message.author.id == joe and message.content == '#em-terminate':
-            await message.reply('Emergency termination.')
-            sys.exit()
+        
         
         if mention in message.content:
             await message.reply(random.choice(mention_replies))
@@ -95,7 +98,7 @@ class WordleBot(discord.Client):
                 guess_list.append(guess.content.lower())
                 print("guessing: {}".format(gc))
                 if gc == '!quit':
-                    break
+                    return
 
                 if gc not in all_words and gc != '!quit':
                     await message.reply("That is not in my dictionary.")
@@ -125,7 +128,7 @@ class WordleBot(discord.Client):
                 await message.reply("Quit the current Wordle game. The answer was **{}**".format(word))
 
 
-#------------------------------
+
 
 
         if message.content.startswith('$solve-wordle'):
@@ -212,8 +215,6 @@ class WordleBot(discord.Client):
                 await message.reply("Congrats, you solved it! Well, I solved it, you kinda just put in all the letters and stuff.")
 
 
-#------------------------------
-
 
         if message.content.startswith('$challenge-wordle'):
             await message.reply("So you challenged me to a Wordle game!\nTell me the answer and I will show you how I would guess it, using Joe\'s algorithm.")
@@ -260,6 +261,7 @@ class WordleBot(discord.Client):
             guess = filtered_sorted_words[0]
             while guess != answer:
                 await message.reply(guess+'\n'+cp_words(guess,answer))
+                #await message.reply('Calculating next best move...')
                 hints = cp_words(guess,answer)
                 filtered_sorted_words = rank_words(filtered_sorted_words,
                                                 hints,
